@@ -16,6 +16,7 @@ namespace Ascent.Player
         public Vector2 MovementValue { get; private set; }
         public Vector2 LookValue { get; private set; }
         public event Action JumpEvent;
+        public event Action JumpCanceledEvent;
         public event Action DashEvent;
         public event Action GroundPoundEvent;
 
@@ -39,6 +40,7 @@ namespace Ascent.Player
             {
                 jumpAction.action.Enable();
                 jumpAction.action.performed += OnJump;
+                jumpAction.action.canceled += OnJumpCanceled;
             }
 
             if (dashAction != null)
@@ -73,6 +75,7 @@ namespace Ascent.Player
             if (jumpAction != null)
             {
                 jumpAction.action.performed -= OnJump;
+                jumpAction.action.canceled -= OnJumpCanceled;
                 jumpAction.action.Disable();
             }
 
@@ -104,6 +107,14 @@ namespace Ascent.Player
             if (context.performed)
             {
                 JumpEvent?.Invoke();
+            }
+        }
+
+        private void OnJumpCanceled(InputAction.CallbackContext context)
+        {
+            if (context.canceled)
+            {
+                JumpCanceledEvent?.Invoke();
             }
         }
 

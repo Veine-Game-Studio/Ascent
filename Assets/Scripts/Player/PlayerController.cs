@@ -15,6 +15,8 @@ namespace Ascent.Player
 
         [Header("Movement Settings")]
         public float WalkSpeed = 6f;
+        public float WalkAcceleration = 50f;
+        public float WalkDeceleration = 50f;
         public float AirSpeedMultiplier = 0.5f;
 
         [Header("Dash Settings")]
@@ -29,6 +31,7 @@ namespace Ascent.Player
         
         [Header("Jump Settings")]
         public float JumpForce = 7f;
+        public float JumpCutMultiplier = 0.5f;
 
         [Header("Wall Slide/Jump Settings")]
         public float WallSlideSpeed = -2f;
@@ -94,7 +97,8 @@ namespace Ascent.Player
                 _isGroundedDebug = false;
                 return false;
             }
-            _isGroundedDebug = Physics2D.OverlapBox(GroundCheck.position, GroundCheckSize, 0f, GroundLayer);
+            RaycastHit2D hit = Physics2D.BoxCast(GroundCheck.position, GroundCheckSize, 0f, Vector2.down, 0.05f, GroundLayer);
+            _isGroundedDebug = hit.collider != null;
             return _isGroundedDebug;
         }
 
@@ -141,7 +145,8 @@ namespace Ascent.Player
             if (GroundCheck != null)
             {
                 Gizmos.color = Color.green;
-                Gizmos.DrawWireCube(GroundCheck.position, GroundCheckSize);
+                // Draw the BoxCast visual representation
+                Gizmos.DrawWireCube(new Vector3(GroundCheck.position.x, GroundCheck.position.y - 0.05f, GroundCheck.position.z), GroundCheckSize);
             }
 
             if (WallCheck != null)

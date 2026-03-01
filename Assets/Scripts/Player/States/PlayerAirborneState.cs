@@ -24,9 +24,9 @@ namespace Ascent.Player
         public override void Tick(float deltaTime)
         {
             // Landing check
-            // We use a small negative threshold (-0.1f) instead of <= 0f. 
-            // When walking off an edge, Y velocity might be 0 or slightly negative but still touching the ground collider's edge.
-            if (player.RB.linearVelocity.y < -0.1f && player.IsGrounded())
+            // We use a small positive threshold (0.01f) instead of <= 0f to account for
+            // Unity zeroing out velocity upon a physical collision with the ground before Update runs.
+            if (player.RB.linearVelocity.y <= 0.01f && player.IsGrounded())
             {
                 player.StateMachine.ChangeState(new PlayerGroundedState(player));
                 return;

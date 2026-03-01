@@ -8,7 +8,6 @@ namespace Ascent.Player
 
         public override void Enter()
         {
-            player.RB.linearVelocity = new Vector2(0f, player.RB.linearVelocity.y);
             base.Enter();
         }
 
@@ -21,6 +20,12 @@ namespace Ascent.Player
             }
             
             base.Tick(deltaTime);
+        }
+
+        public override void FixedTick(float fixedDeltaTime)
+        {
+            MoveBasedOnInput();
+            base.FixedTick(fixedDeltaTime);
         }
     }
 }

@@ -16,8 +16,19 @@ namespace Ascent.Player
 
         public override void Enter()
         {
-            hasAppliedJumpForce = !isJumping;
+            hasAppliedJumpForce = true;
+            if (isJumping)
+            {
+                player.RB.linearVelocity = new Vector2(player.RB.linearVelocity.x, player.JumpForce);
+            }
+            player.InputReader.JumpCanceledEvent += OnJumpCanceled;
             base.Enter();
+        }
+
+        public override void Exit()
+        {
+            player.InputReader.JumpCanceledEvent -= OnJumpCanceled;
+            base.Exit();
         }
 
         public override void Tick(float deltaTime)
@@ -27,12 +38,6 @@ namespace Ascent.Player
 
         public override void FixedTick(float fixedDeltaTime)
         {
-            if (isJumping && !hasAppliedJumpForce)
-            {
-                player.RB.linearVelocity = new Vector2(player.RB.linearVelocity.x, player.JumpForce);
-                hasAppliedJumpForce = true;
-            }
-            
             if (wallJumpLockoutTimer > 0f)
             {
                 wallJumpLockoutTimer -= fixedDeltaTime;
@@ -45,6 +50,14 @@ namespace Ascent.Player
             }
 
             base.FixedTick(fixedDeltaTime);
+        }
+
+        private void OnJumpCanceled()
+        {
+            if (player.RB.linearVelocity.y > 0f)
+            {
+                player.RB.linearVelocity = new Vector2(player.RB.linearVelocity.x, player.RB.linearVelocity.y * player.JumpCutMultiplier);
+            }
         }
     }
 }
